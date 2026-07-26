@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# MTG Brain CLI entry point. Everything runs locally; no network at query time.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+exec python3 "$DIR/src/cli.py" "$@"

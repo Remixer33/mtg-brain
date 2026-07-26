@@ -1,0 +1,10 @@
+# TEST-ONLY dependencies. The MTG Brain runtime is pure Python stdlib and imports
+# nothing from this file. The runtime is TWO surfaces — src/ *and* the bin/mtg
+# shell wrapper that launches it — so auditing it by hand takes both greps:
+#   grep -rE "^(import|from) " src/ | grep -vE "\b(argparse|sqlite3|json|urllib|gzip|shutil|re|sys|os|pathlib|datetime|textwrap|random|collections|itertools|typing|html|unicodedata|hashlib|time)\b"
+#   grep -rniE "curl|wget|api_key|pip install" bin/   # C1: the entry point must stay offline too
+# Both audits are enforced as tests — see tests/test_constraints.py.
+#
+# Constraint C1 (zero LLM API spend) forbids any inference/embedding/vector
+# dependency here, forever. pytest is a test harness, not a runtime dep.
+pytest==9.1.1

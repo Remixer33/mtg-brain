@@ -1,0 +1,120 @@
+{
+  "fetched_at": "2026-07-26T16:15:17+00:00",
+  "source": "https://api.scryfall.com/cards/search?q=is:gamechanger",
+  "game_changers": [
+    "Ad Nauseam",
+    "Ancient Tomb",
+    "Aura Shards",
+    "Biorhythm",
+    "Bolas's Citadel",
+    "Braids, Cabal Minion",
+    "Chrome Mox",
+    "Coalition Victory",
+    "Consecrated Sphinx",
+    "Crop Rotation",
+    "Cyclonic Rift",
+    "Demonic Tutor",
+    "Drannith Magistrate",
+    "Enlightened Tutor",
+    "Farewell",
+    "Field of the Dead",
+    "Fierce Guardianship",
+    "Force of Will",
+    "Gaea's Cradle",
+    "Gamble",
+    "Gifts Ungiven",
+    "Glacial Chasm",
+    "Grand Arbiter Augustin IV",
+    "Grim Monolith",
+    "Humility",
+    "Imperial Seal",
+    "Intuition",
+    "Jeska's Will",
+    "Lion's Eye Diamond",
+    "Mana Vault",
+    "Mishra's Workshop",
+    "Mox Diamond",
+    "Mystical Tutor",
+    "Narset, Parter of Veils",
+    "Natural Order",
+    "Necropotence",
+    "Notion Thief",
+    "Opposition Agent",
+    "Orcish Bowmasters",
+    "Panoptic Mirror",
+    "Rhystic Study",
+    "Seedborn Muse",
+    "Serra's Sanctum",
+    "Smothering Tithe",
+    "Survival of the Fittest",
+    "Teferi's Protection",
+    "Tergrid, God of Fright // Tergrid's Lantern",
+    "Thassa's Oracle",
+    "The One Ring",
+    "The Tabernacle at Pendrell Vale",
+    "Underworld Breach",
+    "Vampiric Tutor",
+    "Worldly Tutor"
+  ],
+  "brackets": {
+    "1": {
+      "name": "Exhibition",
+      "summary": "Ultra-casual. The deck exists to show off a theme or a joke, not to win. Games go long and everyone gets to do their thing.",
+      "allows_game_changers": false,
+      "rules": [
+        "No Game Changers.",
+        "No mass land denial.",
+        "No chaining extra turns.",
+        "No two-card infinite combos.",
+        "Games are expected to go long; winning is not the point."
+      ]
+    },
+    "2": {
+      "name": "Core",
+      "summary": "Precon-level. The baseline Commander experience -- a modern preconstructed deck out of the box lands here.",
+      "allows_game_changers": false,
+      "rules": [
+        "No Game Changers.",
+        "No mass land denial.",
+        "No chaining extra turns.",
+        "No two-card infinite combos.",
+        "Power level of a modern precon; games typically end around turn 9 or later."
+      ]
+    },
+    "3": {
+      "name": "Upgraded",
+      "summary": "A precon that has been deliberately tuned, or a deck built to beat one. Stronger cards and tighter curve, still not cutthroat.",
+      "allows_game_changers": true,
+      "max_game_changers": 3,
+      "rules": [
+        "Up to 3 Game Changers.",
+        "No mass land denial.",
+        "No chaining extra turns.",
+        "Late-game two-card infinite combos are tolerated.",
+        "Noticeably stronger than a precon; games typically end around turn 7 or later."
+      ]
+    },
+    "4": {
+      "name": "Optimized",
+      "summary": "High power. The strongest version of the deck you want to play, built without deck-construction restrictions but not aimed at a tournament metagame.",
+      "allows_game_changers": true,
+      "rules": [
+        "No restrictions: any number of Game Changers.",
+        "Mass land denial, extra-turn chains and two-card infinite combos are all allowed.",
+        "Built to be as strong as possible within its own strategy.",
+        "Not tuned for a competitive metagame -- that is Bracket 5."
+      ]
+    },
+    "5": {
+      "name": "cEDH",
+      "summary": "Competitive EDH. Tournament-tuned and metagame-driven: every card is chosen to win, and to win as fast as possible.",
+      "allows_game_changers": true,
+      "rules": [
+        "No restrictions: any number of Game Changers.",
+        "Deckbuilding is driven by the competitive metagame, not by the pilot's preference.",
+        "Wins as fast as possible; free interaction and fast mana are expected.",
+        "Only the banned list constrains construction."
+      ]
+    }
+  }
+}

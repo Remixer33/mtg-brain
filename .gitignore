@@ -1,0 +1,11 @@
+# Bulk downloads — regenerate with `mtg rebuild`
+data/raw/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
