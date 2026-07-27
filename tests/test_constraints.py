@@ -69,13 +69,25 @@ STDLIB_ALLOWLIST = {
     "textwrap",
     "time",
     "typing",
-    "urllib",  # rebuild path only — asserted below
+    "urllib",  # networked loaders only — asserted below
+    "http",    # networked loaders only — asserted below (dashboard --serve)
 }
 
-#: Modules that make a network call possible. Only the loaders (the `rebuild`
-#: path) may import them.
+#: Modules that make a network call possible. Only the files listed below may
+#: import them — every other file in src/ must be unable to open a socket at
+#: all, which is what makes "zero network at query time" a structural property
+#: rather than a promise.
 NETWORK_MODULES = {"urllib", "socket", "http", "ftplib", "requests", "httpx", "aiohttp"}
-REBUILD_ONLY_FILES = {"load_cards", "load_rules", "load_edhrec", "load_decks"}
+
+#: The network layer, file by file. Four are the `mtg rebuild` loaders. The
+#: fifth, `load_dashboard`, is the download+serve half of `mtg dashboard`
+#: (card art, webfonts, the --serve file server); it is a separate module from
+#: `cmd_dashboard` for exactly this reason — the command that computes and
+#: writes the dashboard data stays provably network-free, and the loader it
+#: calls lazily is the only thing here that opens a socket.
+NETWORKED_FILES = {
+    "load_cards", "load_rules", "load_edhrec", "load_decks", "load_dashboard",
+}
 
 #: C1: no LLM / embedding / hosted-vector-store anything, as executable code.
 BANNED_TOKENS = (
@@ -268,16 +280,38 @@ def test_allowlist_itself_is_really_stdlib():
     assert not not_stdlib, f"allowlist contains non-stdlib modules: {not_stdlib}"
 
 
-def test_only_the_rebuild_loaders_import_the_network():
+def test_only_the_networked_loaders_import_the_network():
     offenders = {}
     for path in SRC_FILES:
-        if path.stem in REBUILD_ONLY_FILES:
+        if path.stem in NETWORKED_FILES:
             continue
         network = _imports_of(path) & NETWORK_MODULES
         if network:
             offenders[str(path.relative_to(SRC))] = sorted(network)
     assert not offenders, (
-        "C1: only the rebuild loaders may import networking:\n"
+        "C1: only the loaders in NETWORKED_FILES may import networking:\n"
+        + "\n".join(f"  {name}: {mods}" for name, mods in offenders.items())
+    )
+
+
+def test_command_modules_never_import_the_network():
+    """The sharp edge of the rule above: no `cmd_*` module may reach the network.
+
+    `mtg dashboard --build` and `--serve` genuinely need a socket, and it would
+    have been easy to put urllib in cmd_dashboard.py and add it to the allowlist.
+    That would have quietly widened the blast radius of every future edit to a
+    command module. Downloads live in `load_dashboard` instead; this test is what
+    keeps them there.
+    """
+    offenders = {}
+    for path in SRC_FILES:
+        if not path.stem.startswith("cmd_"):
+            continue
+        network = _imports_of(path) & NETWORK_MODULES
+        if network:
+            offenders[str(path.relative_to(SRC))] = sorted(network)
+    assert not offenders, (
+        "a command module imported networking — move it into a load_* module:\n"
         + "\n".join(f"  {name}: {mods}" for name, mods in offenders.items())
     )
 

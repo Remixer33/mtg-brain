@@ -25,6 +25,7 @@ COMMAND_MODULES = (
     "cmd_decks",   # deck, deck stats, deck bracket, edhrec
     "cmd_sim",     # deck goldfish, merge
     "cmd_admin",   # rebuild, log
+    "cmd_dashboard",  # dashboard --build / --serve (Remy's Lair)
 )
 
 

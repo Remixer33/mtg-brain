@@ -4,6 +4,14 @@ data/raw/
 *.sqlite-wal
 *.sqlite-shm
 
+# Dashboard derived artifacts — regenerate with `mtg dashboard --build`.
+# The renderer itself IS tracked: dashboard/index.html, dashboard/app/,
+# dashboard/assets/tokens.css, dashboard/assets/app.css and the per-view
+# css/js. Only the exported data, the cached card art and the cached
+# webfonts are ignored — they are large, binary, and rebuildable.
+dashboard/data/
+dashboard/assets/fonts/
+
 # Python
 __pycache__/
 *.py[cod]

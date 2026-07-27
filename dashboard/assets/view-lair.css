@@ -1,0 +1,4 @@
+/* Lair + Decks share one stylesheet: assets/views-deck.css.
+   index.html links this file, so this is where that sheet gets pulled in.
+   @import must be the first rule in the file — nothing may precede it. */
+@import url("views-deck.css");

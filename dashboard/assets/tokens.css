@@ -1,0 +1,122 @@
+/* ============================================================================
+   REMY'S LAIR — design tokens
+   Fel-green on near-black. Illidan/Black Temple by way of a Magic card frame.
+
+   Every value here is verified, not vibes:
+   - UI contrast ratios computed against --bg (#060A06). All text tokens >= 4.5:1.
+   - The five mana colors were re-stepped with the dataviz palette validator on a
+     dark surface. They PASS chroma floor, normal-vision separation (worst pair
+     dE 16.4) and contrast. They FAIL deuteranopia separation on red<->green
+     (dE 3.9) and that is UNFIXABLE while the colors still read as Magic's colors.
+     => Mana color is therefore NEVER the only encoding. Every mana mark carries
+        its letter (W/U/B/R/G) and every chart offers a table view. See .pip-*.
+   ========================================================================== */
+
+:root {
+  /* ---- surfaces (near-black, faint green cast) ---------------------------- */
+  --bg:            #060A06;
+  --surface:       #0C120C;
+  --surface-2:     #121A12;
+  --surface-3:     #182218;
+  --scrim:         rgba(2, 5, 2, 0.72);
+
+  /* ---- fel green — the signature ---------------------------------------- */
+  --fel:           #39FF14;   /* 14.70:1 on --bg  — glow, focus, primary accent */
+  --fel-bright:    #7CFF5E;   /* 15.49:1          — hover / emphasis            */
+  --fel-mid:       #2BC91A;   /*  8.99:1          — solid fills, chart single   */
+  --fel-dim:       #1E8A12;   /*  4.46:1          — large text / UI edges only  */
+  --fel-ghost:     rgba(57, 255, 20, 0.10);
+  --fel-ghost-2:   rgba(57, 255, 20, 0.18);
+
+  /* ---- ink --------------------------------------------------------------- */
+  --text:          #D6E8D2;   /* 15.50:1 */
+  --text-2:        #9DB398;   /*  8.86:1 */
+  --text-muted:    #6E8269;   /*  4.80:1 — AA, the floor. Do not go dimmer.    */
+  --text-on-fel:   #041004;
+
+  /* ---- edges ------------------------------------------------------------- */
+  --border:        #24361F;
+  --border-2:      #2F4629;
+  --border-fel:    rgba(57, 255, 20, 0.32);
+
+  /* ---- status ------------------------------------------------------------ */
+  --good:          #57C489;
+  --warn:          #E8C14A;
+  --bad:           #F0705A;
+
+  /* ---- the five mana colors (validator-stepped; ALWAYS letter-labeled) ---- */
+  --mana-w:        #D8BE60;
+  --mana-u:        #5FAEEA;
+  --mana-b:        #C97BD0;
+  --mana-r:        #EF8A72;
+  --mana-g:        #57C489;
+  --mana-c:        #9AA79A;   /* colorless */
+
+  /* ---- rarity ------------------------------------------------------------ */
+  --rarity-common:   #C8D4C6;
+  --rarity-uncommon: #A9B8C4;
+  --rarity-rare:     #D8BE60;
+  --rarity-mythic:   #E07A3C;
+
+  /* ---- type ---------------------------------------------------------------
+     Orbitron/JetBrains Mono are cached locally by `mtg dashboard --build`.
+     The stacks degrade to system faces so the page still looks deliberate
+     with no network and no cache. ------------------------------------------ */
+  --font-display: "Orbitron", "Rajdhani", "Impact", "Haettenschweiler",
+                  "Arial Narrow Bold", system-ui, sans-serif;
+  --font-body:    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  --fs-xs: 0.75rem; --fs-sm: 0.875rem; --fs-base: 1rem; --fs-lg: 1.125rem;
+  --fs-xl: 1.375rem; --fs-2xl: 1.75rem; --fs-3xl: 2.25rem; --fs-4xl: 3rem;
+  --lh-tight: 1.2; --lh-body: 1.6;
+
+  /* ---- space (4/8 rhythm) ------------------------------------------------ */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 24px; --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+  --r-sm: 3px; --r-md: 6px; --r-lg: 10px; --r-pill: 999px;
+
+  /* ---- glow -------------------------------------------------------------- */
+  --glow-sm:  0 0 6px rgba(57, 255, 20, 0.35);
+  --glow-md:  0 0 14px rgba(57, 255, 20, 0.30), 0 0 3px rgba(57, 255, 20, 0.55);
+  --glow-lg:  0 0 34px rgba(57, 255, 20, 0.22), 0 0 10px rgba(57, 255, 20, 0.38);
+  --glow-text: 0 0 10px rgba(57, 255, 20, 0.55);
+
+  --elev-1: 0 1px 2px rgba(0,0,0,0.6);
+  --elev-2: 0 4px 14px rgba(0,0,0,0.65);
+  --elev-3: 0 12px 36px rgba(0,0,0,0.72);
+
+  /* ---- motion ------------------------------------------------------------ */
+  --t-fast: 140ms; --t-base: 220ms; --t-slow: 320ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in:  cubic-bezier(0.55, 0, 1, 0.45);
+
+  --z-base: 0; --z-sticky: 20; --z-overlay: 40; --z-modal: 100; --z-toast: 1000;
+}
+
+/* Charts get one hue for magnitude (a curve is not five things) and the mana
+   scale only where the datum genuinely IS a color. */
+:root {
+  --chart-single:   var(--fel-mid);
+  --chart-grid:     rgba(214, 232, 210, 0.08);
+  --chart-axis:     rgba(214, 232, 210, 0.28);
+  --chart-surface:  var(--surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --t-fast: 0ms; --t-base: 0ms; --t-slow: 0ms; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Forced-colors / print: never let fel-on-black be the only thing carrying
+   meaning. Marks fall back to system colors and keep their text labels. */
+@media (forced-colors: active) {
+  :root { --fel: Highlight; --text: CanvasText; --bg: Canvas; --surface: Canvas; }
+  .glow, .scanlines { box-shadow: none !important; text-shadow: none !important; }
+}

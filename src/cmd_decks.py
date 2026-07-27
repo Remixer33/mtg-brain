@@ -327,6 +327,14 @@ def _cmc_bucket(cmc) -> str:
     return "7+" if value >= 7 else str(value)
 
 
+# Public aliases. `cmd_dashboard` renders the same numbers the CLI prints, so it
+# must call THIS code rather than re-implement it — a dashboard that disagreed
+# with `mtg deck stats` would be worse than no dashboard. Aliases (not renames)
+# because the private names are used throughout this module already.
+card_type_group = _card_type_group
+cmc_bucket = _cmc_bucket
+
+
 CURVE_BUCKETS = ("0", "1", "2", "3", "4", "5", "6", "7+")
 
 
@@ -427,6 +435,12 @@ def _deck_meta(deck, cards) -> dict:
 
 def _is_land(card) -> bool:
     return "land" in (card["type_line"] or "").lower()
+
+
+# Public aliases — see the note beside card_type_group above.
+all_decks = _all_decks
+deck_meta = _deck_meta
+is_land = _is_land
 
 
 # =================================================================== mtg deck
@@ -858,6 +872,9 @@ def _load_brackets():
         return json.loads(Path(BRACKETS_PATH).read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return None
+
+
+load_brackets = _load_brackets  # public alias — see card_type_group above
 
 
 def compute_bracket(conn, deck) -> dict:

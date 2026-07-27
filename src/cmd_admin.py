@@ -130,6 +130,11 @@ def _row_counts(conn: sqlite3.Connection) -> dict:
     return counts
 
 
+# Public alias: `mtg dashboard --build` reports the same table inventory that
+# `mtg status` prints, from the same query.
+table_counts = _row_counts
+
+
 def _loader(name: str):
     """Import a loader lazily. Loaders pull in urllib; keeping them out of the
     import path of every other command is what makes 'zero network at query

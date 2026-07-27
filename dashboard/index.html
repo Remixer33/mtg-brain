@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="description" content="Remy's Lair — an offline dashboard for MTG Brain. Magic: The Gathering, Commander.">
+<title>Remy's Lair</title>
+
+<!-- Favicon is an inline data: URI so the page makes ZERO network requests and
+     never 404s for /favicon.ico. (Data URIs cannot read CSS custom properties,
+     so the fel green is written literally here and ONLY here.) -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23060A06'/%3E%3Cpath d='M16 4 L26 10 V22 L16 28 L6 22 V10 Z' fill='none' stroke='%2339FF14' stroke-width='2'/%3E%3Cpath d='M16 10 v12 M11 13 v6 M21 13 v6' stroke='%2339FF14' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+
+<!-- ── styles ───────────────────────────────────────────────────────────────
+     tokens.css is FIXED (design tokens; never edit).
+     fonts.css is written by `mtg dashboard --build`; a no-op placeholder ships
+     in the repo so this link is always safe.
+     app.css is the shell: base, layout, .panel, buttons, charts, markdown.
+     Each view then layers its own sheet. A view sheet that does not exist yet
+     is simply ignored by the browser — a missing file must never break the page.
+     Both `assets/view-*.css` and `app/view-*.css` are linked so a view author
+     can put their sheet next to their JS or next to the other sheets; only one
+     of the two will ever exist. -->
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/app.css">
+
+<link rel="stylesheet" href="assets/view-lair.css">
+<link rel="stylesheet" href="assets/view-decks.css">
+<link rel="stylesheet" href="assets/view-cards.css">
+<link rel="stylesheet" href="assets/view-rules.css">
+<link rel="stylesheet" href="assets/view-glossary.css">
+<link rel="stylesheet" href="assets/view-merge.css">
+<link rel="stylesheet" href="assets/view-learning.css">
+
+<link rel="stylesheet" href="app/view-lair.css">
+<link rel="stylesheet" href="app/view-decks.css">
+<link rel="stylesheet" href="app/view-cards.css">
+<link rel="stylesheet" href="app/view-rules.css">
+<link rel="stylesheet" href="app/view-glossary.css">
+<link rel="stylesheet" href="app/view-merge.css">
+<link rel="stylesheet" href="app/view-learning.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<div class="app" id="app">
+
+  <!-- ── mobile top bar (< 1024px) ──────────────────────────────────────── -->
+  <header class="topbar" id="topbar">
+    <button class="icon-btn topbar__toggle" id="navToggle" type="button"
+            aria-label="Open navigation" aria-expanded="false" aria-controls="sidebar">
+      <!-- icon injected by boot.js -->
+    </button>
+    <a class="topbar__brand" href="#/lair">
+      <span class="topbar__title">REMY&rsquo;S LAIR</span>
+    </a>
+  </header>
+
+  <div class="drawer-scrim" id="drawerScrim" hidden></div>
+
+  <!-- ── sidebar / drawer ───────────────────────────────────────────────── -->
+  <nav class="sidebar" id="sidebar" aria-label="Primary">
+    <div class="masthead">
+      <button class="icon-btn sidebar__close" id="navClose" type="button" aria-label="Close navigation">
+        <!-- icon injected by boot.js -->
+      </button>
+      <a class="masthead__link" href="#/lair">
+        <span class="masthead__sigil" aria-hidden="true"></span>
+        <h1 class="masthead__title"><span class="masthead__text">REMY&rsquo;S LAIR</span></h1>
+      </a>
+      <p class="masthead__sub">Magic: The Gathering &middot; Commander &middot; offline</p>
+    </div>
+
+    <ul class="nav" id="navList"><!-- built by boot.js --></ul>
+
+    <div class="sidebar__foot" id="sidebarFoot"><!-- built by boot.js --></div>
+  </nav>
+
+  <!-- ── main ───────────────────────────────────────────────────────────── -->
+  <main class="main" id="main" tabindex="-1">
+    <div class="view-host" id="viewHost">
+      <!-- Pre-boot fallback. boot.js replaces this the moment it runs; if the
+           scripts fail to load at all, this is what the user sees instead of a
+           blank page. -->
+      <noscript>
+        <div class="panel state">
+          <h2 class="state__title">JavaScript is required</h2>
+          <p class="state__body">Remy&rsquo;s Lair renders entirely in the browser from
+             local data files. Enable JavaScript and reload.</p>
+        </div>
+      </noscript>
+      <div class="panel state" id="preboot">
+        <h2 class="state__title">Loading&hellip;</h2>
+        <p class="state__body">If this message stays on screen, the app scripts under
+           <code>dashboard/app/</code> failed to load. Open the browser console for detail.</p>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toaster" id="toaster" role="status" aria-live="polite" aria-atomic="false"></div>
+
+<!-- ── scripts ──────────────────────────────────────────────────────────────
+     ORDER MATTERS:
+       1. app/core.js   defines window.RL (register/data/el/icons/charts/md/router)
+       2. data/*.js     each ends in RL.register(key, payload)  <- needs RL to exist
+       3. app/view-*.js each ends in RL.registerView({...})
+       4. app/boot.js   builds the nav, starts the router, renders empty states
+     Data is emitted as .js (not .json) on purpose: fetch() of a local file is
+     blocked by CORS on file://, a <script> tag is not. NEVER add fetch() here.
+     data/cards.js (~9.6MB) is deliberately ABSENT — the Cards view pulls it in
+     on demand via RL.loadLazy('cards', 'cards.js', cb).
+     Any of these files being missing is a no-op: boot.js renders a real empty
+     state instead. -->
+<script src="app/core.js"></script>
+
+<script src="data/core.js"></script>
+<script src="data/deck-tidus.js"></script>
+<script src="data/deck-bumbleflower.js"></script>
+<script src="data/deck-dogmeat.js"></script>
+<script src="data/merged.js"></script>
+<script src="data/rules.js"></script>
+
+<script src="app/view-lair.js"></script>
+<script src="app/view-decks.js"></script>
+<script src="app/view-cards.js"></script>
+<script src="app/view-rules.js"></script>
+<script src="app/view-glossary.js"></script>
+<script src="app/view-merge.js"></script>
+<script src="app/view-learning.js"></script>
+
+<script src="app/boot.js"></script>
+</body>
+</html>
