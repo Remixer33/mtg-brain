@@ -1,0 +1,95 @@
+/* ============================================================================
+   REMY'S LAIR — view-glossary.css
+   The "Glossary" view: a searchable two-pane list of official terms (left list,
+   right definition), plus a tab for Omar's beginner glossary document.
+
+   House rule: no hex literals — tokens or --rl-* only. The rule-cross-reference
+   links (.xref) are styled in view-rules.css if present; a bare <a> still reads
+   as a link via app.css's global anchor styling, so this view is safe alone.
+   ========================================================================== */
+
+.gloss {
+  display: grid;
+  grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+  gap: var(--s-5);
+  align-items: start;
+}
+@media (max-width: 820px) {
+  .gloss { grid-template-columns: 1fr; }
+}
+
+.gloss__left { min-width: 0; }
+
+.gloss__list {
+  max-height: min(64vh, 640px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+@media (max-width: 820px) { .gloss__list { max-height: 340px; } }
+
+.gloss__terms { list-style: none; margin: 0; padding: 0; }
+.gloss__term {
+  display: flex; align-items: center; gap: var(--s-2);
+  min-height: 44px;
+  padding: var(--s-2) var(--s-3);
+  color: var(--text-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rl-hairline);
+  border-inline-start: 2px solid transparent;
+  transition: background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+}
+.gloss__term:last-child { border-bottom: 0; }
+.gloss__term .icon { color: var(--text-muted); margin-inline-start: auto; flex: 0 0 auto; }
+.gloss__term:hover { background: var(--rl-hover); color: var(--text); }
+.gloss__term:hover .icon { color: var(--fel-mid); }
+.gloss__term.is-selected {
+  background: var(--fel-ghost);
+  border-inline-start-color: var(--fel);
+  color: var(--fel-bright);
+}
+.gloss__term.is-selected .icon { color: var(--fel); }
+.gloss__termname { font-size: var(--fs-sm); font-weight: 600; letter-spacing: .01em; }
+.gloss__termname .hit { background: var(--fel-ghost-2); color: var(--text); border-radius: var(--r-sm); }
+
+.gloss__empty {
+  padding: var(--s-4); color: var(--text-2); font-size: var(--fs-sm);
+}
+
+.gloss__right { position: sticky; top: var(--s-4); }
+@media (max-width: 820px) { .gloss__right { position: static; } }
+
+.gloss__placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--s-3); text-align: center; min-height: 220px; padding: var(--s-6);
+  color: var(--text-muted);
+  border: 1px dashed var(--border-2); border-radius: var(--r-md);
+}
+.gloss__placeholder .icon { color: var(--fel-dim); }
+
+.glossdetail__term {
+  font-family: var(--font-display);
+  font-size: var(--fs-2xl);
+  letter-spacing: .03em;
+  color: var(--text);
+  margin-bottom: var(--s-4);
+}
+.glossdetail__def {
+  color: var(--text);
+  line-height: var(--lh-body);
+  max-width: var(--measure);
+  white-space: pre-wrap;
+}
+.glossdetail__def a { text-underline-offset: 3px; }
+.glossdetail__cli {
+  display: flex; align-items: center; gap: var(--s-2);
+  margin-top: var(--s-5);
+  font-size: var(--fs-sm); color: var(--fel-bright);
+  padding: var(--s-2) var(--s-3);
+  background: var(--bg); border: 1px solid var(--border-fel); border-radius: var(--r-md);
+}
+.glossdetail__cli .icon { color: var(--fel-dim); }
+
+.glossdoc .md { max-width: var(--measure); }
