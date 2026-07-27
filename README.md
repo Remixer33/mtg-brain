@@ -273,6 +273,42 @@ actually blocking you.
 
 ---
 
+## Remy's Lair — the dashboard
+
+Everything above is the terminal. **Remy's Lair** is the same data as a page you can click through:
+your three decks side by side, the full card grid with a detail drawer, the Comprehensive Rules,
+the 735 glossary terms, the Bant merge, and your learning log.
+
+```bash
+./bin/mtg dashboard            # where it is, whether it's built, how stale
+./bin/mtg dashboard --serve    # http://127.0.0.1:8765/
+```
+
+You can also just open `dashboard/index.html` directly — it runs from `file://` with the network
+off. That is the whole point of how it's built:
+
+- **No build step, no framework, no CDN.** Plain HTML, CSS and JavaScript.
+- **No `fetch()`.** The data ships as `dashboard/data/*.js` files that each end in
+  `RL.register(...)`, because a `<script>` tag works on `file://` and `fetch()` is blocked by CORS.
+  Card art and webfonts are cached locally too, so the page makes **zero network requests**.
+- **It is a dumb renderer.** There is no inference in it. Every number it shows is the number the
+  CLI computes, and card text, rulings and rule text are inserted verbatim as text nodes. Where the
+  data has a gap it prints "not in my data" rather than guessing — C2 holds on the page exactly as
+  it does in the terminal.
+
+The one command that touches the network is `--build`, which exports the data files and caches the
+art and fonts:
+
+```bash
+./bin/mtg dashboard --build                  # after `mtg rebuild`, or after editing a deck
+./bin/mtg dashboard --build --skip-images    # data only, much faster
+```
+
+`mtg dashboard` on its own tells you whether the exported data is older than the database, so you
+know when a rebuild is due.
+
+---
+
 ## PATH tip — running `mtg` from anywhere
 
 Everything above says `./bin/mtg`, which only works from the project folder. To type just `mtg`
@@ -311,8 +347,8 @@ that resolves to the wrong place. Use the function or the wrapper script.
 ........................................................................ [ 48%]
 ........................................................................ [ 72%]
 ........................................................................ [ 96%]
-...........                                                              [100%]
-299 passed in 14.78s
+............                                                             [100%]
+300 passed in 16.80s
 ```
 
 If you don't have the virtualenv, `python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt`
@@ -374,6 +410,9 @@ mtg log rule --rule <number> --note "..."
 mtg log game --list  |  mtg log rule --list
 
 mtg status                                  database health
+mtg dashboard                               where Remy's Lair is, and how fresh
+       [--build] [--serve] [--port N]       --build exports the page data (networked)
+       [--skip-images] [--skip-fonts] [--force]   --serve runs it on 127.0.0.1
 mtg rebuild [--only cards|rules|decks|edhrec] [--force]    the only networked command
 ```
 

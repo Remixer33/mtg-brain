@@ -159,12 +159,21 @@ mtg status                               DB health + inventory
 mtg log game --deck <slug> --result win|loss|draw --opponents "..." --notes "..."
 mtg log rule --rule <number> --note "..."    (validates that the rule exists)
 mtg log game --list  |  mtg log rule --list
-mtg rebuild [--only cards|rules|decks|edhrec] [--force]   <- the ONLY networked command
+
+mtg dashboard                            Remy's Lair: path, built?, staleness, inventory
+mtg dashboard --build [--skip-images]    export dashboard/data/*.js + cache art/fonts
+       [--skip-fonts] [--force]          <- NETWORKED, like rebuild
+mtg dashboard --serve [--port 8765]      serve dashboard/ on 127.0.0.1
+
+mtg rebuild [--only cards|rules|decks|edhrec] [--force]   <- networked (data refresh)
 ```
 
 **Everything is offline and free.** The runtime is pure Python standard library — no API keys, no
 inference calls, no per-query cost. SQLite FTS5 does the retrieval; you do the reasoning.
-`mtg rebuild` is the single exception: it re-downloads from Scryfall, Wizards, MTGJSON, and EDHREC.
+Exactly **two** commands touch the network, and neither is on a query path: `mtg rebuild`
+re-downloads from Scryfall, Wizards, MTGJSON and EDHREC, and `mtg dashboard --build` caches card
+art and webfonts. (`--serve` binds 127.0.0.1 and downloads nothing; the page itself is fully
+offline.)
 
 ### Things that will trip you up
 
@@ -183,6 +192,10 @@ inference calls, no per-query cost. SQLite FTS5 does the retrieval; you do the r
   `head`, you lose that exit code — read the text, not `$?`.
 - **Roles in `mtg deck stats` overlap on purpose** and do not sum to the deck size. Say so if you
   quote them.
+- **`dashboard/data/*.js` is generated.** Never hand-edit it, and never edit `assets/tokens.css`.
+  Change the source and re-run `mtg dashboard --build`, or the next build silently reverts you.
+- **The dashboard has the Bant merge, the CLI does not.** `mtg deck merged-bant` still fails — but
+  the page's Merge view renders it, because it is built from `decks/merged-bant/` + `merged.js`.
 
 ---
 
@@ -224,6 +237,33 @@ rule. Log it, then teach it. Do not wait to be asked.
 
 ---
 
+## Remy's Lair — the dashboard
+
+`dashboard/` is a browsable page over the same database: the three decks side by side, a card grid
+with a detail drawer, the Comprehensive Rules, the glossary, the Bant merge, and the learning log.
+Start it with `mtg dashboard --serve` (127.0.0.1:8765), or just open `dashboard/index.html` — it
+runs from `file://` with the network off.
+
+**It is a dumb renderer, and that is deliberate.** No framework, no build step, no `fetch()`, no
+CDN, no inference. Data ships as `dashboard/data/*.js` files that each end in `RL.register(...)`,
+because a `<script>` tag works on `file://` where `fetch()` is blocked by CORS. Card text, rulings
+and rule text are inserted **verbatim as text nodes**; a gap renders as "not in my data". **C2
+applies to the page exactly as it applies to you** — if you edit a view, never let it paraphrase,
+summarise, or compute a card fact.
+
+**When to point Omar at it instead of answering in the terminal:** browsing ("show me the whole
+deck", "what's in the merge"), comparing all three decks at once, or reading a PRIMER/CARDS/
+UPGRADES document with a table of contents. **Answer in the terminal** when he is mid-game and
+wants one fact — the CLI is faster and you must run the command anyway to satisfy C2.
+
+**The page is a SNAPSHOT.** `dashboard/data/*.js` is exported, not live. After `mtg rebuild`, after
+logging a game or a missed rule, or after editing a deck document, the page is stale until you run
+`mtg dashboard --build`. Bare `mtg dashboard` reports the staleness — check it before telling Omar
+a number he read on the page is current. `--build` is networked (art + fonts); `--skip-images`
+makes it fast when you only changed data.
+
+---
+
 ## Where everything lives
 
 ```
@@ -236,7 +276,12 @@ decks/tidus|bumbleflower|dogmeat/   PRIMER.md (game plan), CARDS.md (card-by-car
 decks/merged-bant/             the Tidus+Bumbleflower merge — MERGED-BANT.md + DECKLIST.md (docs only)
 agents/                        the nine playbooks; read one before acting as it
 learning/                      RULES-I-KEEP-MISSING.md, GAME-LOG.md, GLOSSARY.md
-tests/                         299 tests, including the C1/C2 constraint tests
+dashboard/                     Remy's Lair — the offline page (see below)
+  index.html                   the whole app; open it directly or `mtg dashboard --serve`
+  app/                         core.js (RL: register/router/charts/md) + one view-*.js per section
+  assets/                      tokens.css (FIXED — never edit), app.css, one view-*.css per section
+  data/                        EXPORTED, do not hand-edit — regenerate with `mtg dashboard --build`
+tests/                         300 tests, including the C1/C2 constraint tests
 ```
 
 ---
