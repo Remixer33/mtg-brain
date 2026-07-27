@@ -1,0 +1,70 @@
+Remy's Lair is the page. This is the other half of the system — the CLI.
+Real output, captured 2026-07-27. Nothing here is typed by hand.
+
+==============================================================
+$ ./bin/mtg card "Command Tower"
+==============================================================
+── Command Tower ─────────────────────────────────────────────────────────
+Mana value     : 0
+Type           : Land
+
+{T}: Add one mana of any color in your commander's color identity.
+
+Color identity : colorless
+Rarity         : common
+Commander      : legal
+EDHREC rank    : #2
+Price (USD)    : $0.28
+
+── Rulings (3) ───────────────────────────────────────────────────────────
+[2020-11-10] (wotc)
+  If you don't have a commander, Command Tower's ability produces no mana.
+
+[2020-11-10] (wotc)
+  If you have two commanders, the ability adds one mana of any color in
+  their combined color identities.
+
+[2020-11-10] (wotc)
+  If your commander is a card that has no colors in its color identity,
+  Command Tower's ability produces no mana. It doesn't produce {C}.
+
+https://scryfall.com/card/msc/233/command-tower?utm_source=api
+
+==============================================================
+$ ./bin/mtg deck bracket tidus
+==============================================================
+── Counter Blitz (FINAL FANTASY X) — bracket ─────────────────────────
+Commander : Tidus, Yuna's Guardian
+
+ESTIMATED BRACKET 3 — Upgraded
+  A precon that has been deliberately tuned, or a deck built to beat
+  one. Stronger cards and tighter curve, still not cutthroat.
+
+── SIGNALS ───────────────────────────────────────────────────────────
+  Game Changers        : 1 (checked against 53 listed cards)
+      • Farewell
+  Mass land denial     : 0
+  Extra turns          : 0
+  Two-card infinite    : not detected by this tool; requires human/agent review
+
+── REASONING ─────────────────────────────────────────────────────────
+  - 1 Game Changer(s) found: Farewell. Brackets 1-2 both state 'No
+    Game Changers.', while Bracket 3 (Upgraded) allows 'Up to 3
+    Game Changers.' — so a single listed card lifts an otherwise
+    precon-level deck to 3.
+  - No mass land denial detected (searched for 'destroy all lands'
+    / 'each player sacrifices a land' wording).
+  - No extra-turn effects detected (searched for 'take an extra
+    turn').
+
+── NEEDS HUMAN / AGENT REVIEW ────────────────────────────────────────
+  - Two-card infinite combos: not detected by this tool; requires
+    human/agent review. A combo would raise this estimate.
+
+── BRACKET 3 RULES ───────────────────────────────────────────────────
+  - Up to 3 Game Changers.
+  - No mass land denial.
+  - No chaining extra turns.
+  - Late-game two-card infinite combos are tolerated.
+  - Noticeably stronger than a precon; games typically end around
+    turn 7 or later.
